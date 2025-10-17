@@ -1,14 +1,12 @@
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
-    // CORS headers
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
     };
 
-    // Handle preflight
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
@@ -18,30 +16,27 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        // Extract prompt from path
+        // Extract prompt from path: /generate/video/prompt/hello world
         const path = event.path;
-        console.log('Full path:', path);
-        
-        // Pattern: /generate/prompt/your prompt here
-        const promptMatch = path.match(/\/generate\/prompt\/(.+)/);
+        const promptMatch = path.match(/\/generate\/video\/prompt\/(.+)/);
         
         if (!promptMatch) {
             return {
                 statusCode: 400,
                 headers,
-                body: JSON.stringify({ error: 'Invalid URL format. Use: /generate/prompt/your text here' })
+                body: JSON.stringify({ 
+                    error: 'Invalid URL format. Use: /generate/video/prompt/your text here',
+                    example: 'https://text2videoapi.netlify.app/generate/video/prompt/beautiful sunset'
+                })
             };
         }
 
         const prompt = decodeURIComponent(promptMatch[1]);
-        console.log('Extracted prompt:', prompt);
+        console.log('Video prompt:', prompt);
 
-        // Your actual API call
+        // Your actual Video API call
         const apiUrl = `https://texttovideoapi.anshapi.workers.dev/generate?prompt=${encodeURIComponent(prompt)}`;
-        console.log('Calling API:', apiUrl);
-        
         const apiResponse = await axios.get(apiUrl);
-        console.log('API Response:', apiResponse.data);
 
         // Modify developer field
         const modifiedData = {
@@ -56,14 +51,13 @@ exports.handler = async (event, context) => {
         };
 
     } catch (error) {
-        console.error('Error details:', error.response?.data || error.message);
+        console.error('Video API Error:', error.message);
         return {
             statusCode: 500,
             headers,
             body: JSON.stringify({ 
-                error: 'Internal server error',
-                message: error.message,
-                details: error.response?.data
+                error: 'Video generation failed',
+                message: error.message
             })
         };
     }
