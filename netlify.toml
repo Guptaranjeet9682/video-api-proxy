@@ -4,7 +4,7 @@
 
 # 🔥 VIDEO ROUTES - Yahan se aap easily naam change kar sakte hain
 [[redirects]]
-  from = "/generate/video11/prompt/*"
+  from = "/generate/video/prompt/*"
   to = "/.netlify/functions/generateVideo"
   status = 200
 
