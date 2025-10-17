@@ -2,11 +2,26 @@
   functions = "netlify/functions"
   publish = "."
 
+# 🔥 VIDEO ROUTES - Yahan se aap easily naam change kar sakte hain
 [[redirects]]
-  from = "/generate/prompt/*"
-  to = "/.netlify/functions/generate"
+  from = "/generate/video/prompt/*"
+  to = "/.netlify/functions/generateVideo"
   status = 200
 
+# 🔥 IMAGE ROUTES  
+[[redirects]]
+  from = "/generate/image/prompt/*"
+  to = "/.netlify/functions/generateImage"
+  status = 200
+
+# ✅ Agar aap video ka naam change karna chahte hain, bas yahan change karo
+# Example: /video26 banane ke liye:
+[[redirects]]
+  from = "/generate/video26/prompt/*"
+  to = "/.netlify/functions/generateVideo"
+  status = 200
+
+# Home page
 [[redirects]]
   from = "/*"
   to = "/index.html"
