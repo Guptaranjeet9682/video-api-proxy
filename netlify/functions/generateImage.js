@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
         if (!promptMatch) {
             return {
                 statusCode: 400,
-                headers,
+                headers: { ...headers, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     error: 'Invalid URL format. Use: /generate/image/prompt/your text here',
                     example: 'https://text2videoapi.netlify.app/generate/image/prompt/mountain landscape'
@@ -34,29 +34,34 @@ exports.handler = async (event, context) => {
         const prompt = decodeURIComponent(promptMatch[1]);
         console.log('Image prompt:', prompt);
 
-        // Image API call - direct URL bana rahe hain
+        // Image API call - direct image data get karenge
         const imageApiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true`;
         
-        // We'll return the direct URL (no modification needed)
-        const responseData = {
-            success: true,
-            prompt: prompt,
-            url: imageApiUrl,
-            type: "image",
-            generated_at: new Date().toISOString()
-        };
+        console.log('Calling Image API:', imageApiUrl);
+        
+        // Image data as buffer mein receive karenge
+        const imageResponse = await axios.get(imageApiUrl, {
+            responseType: 'arraybuffer'
+        });
 
+        // Image data directly return karenge
         return {
             statusCode: 200,
-            headers,
-            body: JSON.stringify(responseData)
+            headers: {
+                ...headers,
+                'Content-Type': 'image/jpeg',
+                'Content-Disposition': `inline; filename="generated-image.jpg"`,
+                'Cache-Control': 'public, max-age=3600'
+            },
+            body: imageResponse.data.toString('base64'),
+            isBase64Encoded: true
         };
 
     } catch (error) {
         console.error('Image API Error:', error.message);
         return {
             statusCode: 500,
-            headers,
+            headers: { ...headers, 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 error: 'Image generation failed',
                 message: error.message
