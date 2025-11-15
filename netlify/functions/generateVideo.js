@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
         console.log('Video prompt:', prompt);
 
         // Your actual Video API call
-        const apiUrl = `https://texttovideoapi.anshapi.workers.dev/generate?prompt=${encodeURIComponent(prompt)}`;
+        const apiUrl = `https://texttovideov2.alphaapi.workers.dev/api/?prompt=${encodeURIComponent(prompt)}`;
         const apiResponse = await axios.get(apiUrl);
 
         // Modify developer field
